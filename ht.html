@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body, html, #map {
+height: 100%;
+padding: 0;
+margin: 0;
+}
+#form2{
+    display: none;
+}
+#forms {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+    background-color: rgb(246, 194, 146);
+    padding: 10px;
+    border-radius: 5px;
+}
+.info.legend {
+    background-color: white;
+    padding: 10px;
+    border: 2px solid #999;
+}
+
+.dropdown-content{
+    display: none;
+}
+.campsite-icon{
+    color: green;
+}
+.theme-park-icon{
+    color: purple;
+}
+.attraction-icon{
+    color: black;
+}
+.zoo-icon{
+    color: brown;
+}
+.museum-icon{
+    color: grey;
+}
+.viewpoint-icon{
+    color: orange;
+}
+
+
+</style>
+<title>Mój pierwszy geoportal w Leaflet</title>
+<meta charset="UTF-8">
+<link rel="icon" href="icon.jpg", type= "image'jpeg"/>
+<link rel="stylesheet" href="leaflet/leaflet.css">
+<link rel="stylesheet" href="leaflet-routing-machine/dist/leaflet-routing-machine.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+</head>
+<body>
+<div id="map"></div>
+<div id="forms">
+    <div class="btn-group btn-group-toggle" data-toggle="buttons" style="margin-bottom: 20px;">
+        <label class="btn btn-secondary active">
+        <input type="radio" name="options" id="option1" autocomplete="off" checked> Zaplanuj podróż
+        </label>
+        <label class="btn btn-secondary">
+        <input type="radio" name="options" id="option2" autocomplete="off"> Wyszukaj atrakcje we wskazanej okolicy
+        </label>
+    </div>
+
+    <div id="form1">
+        <form>
+            <input type="text" id="search" autocomplete="on" placeholder="Wpisz punkt początkowy">
+            <input type="text" id="search2" autocomplete="on" placeholder="Wpisz punkt końcowy">
+            <div id="suggestions"></div>
+            <div id="suggestions2"></div>
+            <div style="display: flex; justify-content: space-between;">
+                <div>
+                    <div>
+                        <p id="totalDistance">Długość trasy: </p>
+                    </div>
+                    <div>
+                        <p id="totalTime">Czas przejazdu: </p>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <i class="fas fa-chevron-down dropbtn fa-2x" title="Wybierz promień w jakim wyświetlą się atrakcje"></i>
+                    <div class="dropdown-content">
+                        <input type="range" min="1" max="20" value="0" class="slider" id="myRange">
+                        <p>Promień: <span id="demo"></span> km</p>
+                        <button id="okButton">OK</button>
+                    </div>
+                </div>
+            </div>
+            
+            <input type="submit" value="Szukaj">
+        </form>
+    </div>
+            
+    <div id="form2">
+        <form>
+            <input type="text" id="search3" autocomplete="on" placeholder="Wybierz miejsce">
+            <div id="suggestions3"></div>
+            <div class="dropdown">
+                <i class="fas fa-chevron-down dropbtn fa-2x" title="Wybierz promień w jakim wyświetlą się atrakcje"></i>
+                <div class="dropdown-content">
+                    <input type="range" min="1" max="20" value="1" class="slider" id="myRange2">
+                    <p>Promień: <span id="demo2"></span> km</p>
+                    <button id="okButton2">OK</button>
+                </div>
+            </div>
+            
+            <input type="submit" id="submit2" value="Szukaj">
+        </form>
+    </div>
+</div>
+
+<script src="leaflet/leaflet.js"></script>
+<script src="leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://unpkg.com/@turf/turf/turf.min.js"></script>
+<script src="osmtogeojson/osmtogeojson.js"></script>
+<script src="main.js"></script>
+</body>
+</html>
