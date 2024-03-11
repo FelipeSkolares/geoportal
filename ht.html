@@ -25,8 +25,14 @@ margin: 0;
     border: 2px solid #999;
 }
 
-.dropdown-content{
-    display: none;
+.dropdown{
+    display: flex;
+    flex-direction: column;
+    
+}
+.dropdown-menu{
+    padding: 10px;
+    flex-direction: column;
 }
 .campsite-icon{
     color: green;
@@ -46,7 +52,33 @@ margin: 0;
 .viewpoint-icon{
     color: orange;
 }
+.slider{
+    width: 100%;
 
+}
+
+#distanceParagraph{
+    text-align: center;
+}
+#distanceParagraph2{
+    text-align: center;
+}
+.input-container {
+    display: flex;
+    justify-content: space-between;
+}
+#search, #search2 {
+    width: 50%;
+}
+
+#okButton,#okButton2{
+    display: block;
+    margin: auto;
+    width: 60%;
+}
+.dropdown1{
+    float: right;
+}
 
 </style>
 <title>Mój pierwszy geoportal w Leaflet</title>
@@ -72,8 +104,10 @@ margin: 0;
 
     <div id="form1">
         <form>
-            <input type="text" id="search" autocomplete="on" placeholder="Wpisz punkt początkowy">
-            <input type="text" id="search2" autocomplete="on" placeholder="Wpisz punkt końcowy">
+            <div class="input-container">
+                <input type="text" id="search" autocomplete="on" placeholder="Wpisz punkt początkowy" class="form-control">
+                <input type="text" id="search2" autocomplete="on" placeholder="Wpisz punkt końcowy" class="form-control">
+            </div>
             <div id="suggestions"></div>
             <div id="suggestions2"></div>
             <div style="display: flex; justify-content: space-between;">
@@ -86,33 +120,37 @@ margin: 0;
                     </div>
                 </div>
                 <div class="dropdown">
-                    <i class="fas fa-chevron-down dropbtn fa-2x" title="Wybierz promień w jakim wyświetlą się atrakcje"></i>
-                    <div class="dropdown-content">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-sliders-h" title="Wybierz promień w jakim wyświetlą się atrakcje"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                         <input type="range" min="1" max="20" value="0" class="slider" id="myRange">
-                        <p>Promień: <span id="demo"></span> km</p>
-                        <button id="okButton">OK</button>
+                        <p id="distanceParagraph">Promień: <span id="demo"></span> km</p>
+                        <button id="okButton" class="btn btn-secondary">OK</button>
                     </div>
                 </div>
             </div>
             
-            <input type="submit" value="Szukaj">
+            <input type="submit" value="Szukaj" class="btn btn-secondary">
         </form>
     </div>
             
     <div id="form2">
         <form>
-            <input type="text" id="search3" autocomplete="on" placeholder="Wybierz miejsce">
+            <input type="text" id="search3" autocomplete="on" placeholder="Wybierz miejsce" class="form-control">
             <div id="suggestions3"></div>
-            <div class="dropdown">
-                <i class="fas fa-chevron-down dropbtn fa-2x" title="Wybierz promień w jakim wyświetlą się atrakcje"></i>
-                <div class="dropdown-content">
+            <div class="dropdown1">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-sliders-h" title="Wybierz promień w jakim wyświetlą się atrakcje"></i>
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
                     <input type="range" min="1" max="20" value="1" class="slider" id="myRange2">
-                    <p>Promień: <span id="demo2"></span> km</p>
-                    <button id="okButton2">OK</button>
+                    <p id="distanceParagraph2">Promień: <span id="demo2"></span> km</p>
+                    <button id="okButton2" class="btn btn-secondary">OK</button>
                 </div>
             </div>
             
-            <input type="submit" id="submit2" value="Szukaj">
+            <input type="submit" id="submit2" value="Szukaj" class="btn btn-secondary">
         </form>
     </div>
 </div>
@@ -120,7 +158,8 @@ margin: 0;
 <script src="leaflet/leaflet.js"></script>
 <script src="leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@turf/turf/turf.min.js"></script>
 <script src="osmtogeojson/osmtogeojson.js"></script>
 <script src="main.js"></script>
