@@ -1,12 +1,10 @@
 
 var mymap = L.map("map",{maxZoom:19}).setView([52.22, 21.01], 11);
 var OpenStreetMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(mymap);
-var Ortophoto=L.tileLayer.wms('https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution',{
-    layers: 'Raster',
-})
+var orto = L.tileLayer('http://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}', { attribution: 'google'});
 var baseLayers = {
     "OpenStreetMap": OpenStreetMap,
-    "Ortofotomapa": Ortophoto
+    "Ortofotomapa": orto
 };
 L.control.layers(baseLayers, null, {position:'bottomright'}).addTo(mymap);
 
@@ -95,8 +93,8 @@ function geocode(address) {
 }
 var radius=0;
 var control;
-$('.dropbtn').on('click', function() {
-    $('.dropdown-content').toggle();
+$('.dropdown').click(function(){
+    $(this).find('.dropdown-content').slideToggle("fast");
 });
 $('#myRange').on('input', function() {
     radius = $(this).val();
@@ -153,6 +151,7 @@ function drawRoute(startCoords, endCoords) {
     radius=Number(radius);
     var buffer = turf.buffer(turf.lineString(routeCoordinates), radius, {units:'kilometers'});
     var bbox = turf.bbox(buffer);
+    console.log('box',bbox);
     //L.geoJSON(buffer).addTo(mymap);
     var overpassQuery = `
       [out:json][timeout:25];
@@ -329,6 +328,7 @@ function searchAttractions(address, radius) {
     addedPoints = [];
     var startcoord;
     addedPoints=[];
+    control1=null;
     if (control) {
         mymap.removeControl(control);
         mymap.removeLayer(control);
@@ -370,7 +370,7 @@ function searchAttractions(address, radius) {
                     var popupContent = feature.properties.name 
                     ? "<b>" + feature.properties.name.replace('_', ' ') + "</b>" 
                     : "<b>" + feature.properties.tourism.replace('_', ' ')+"</b>";
-                    //popupContent +='<br><button id="add-to-route">Dodaj do swojej trasy</button>';
+                    popupContent +='<br><button id="add-to-route1">Dodaj do swojej trasy</button>';
                     switch (feature.properties.tourism) {
                         case 'camp_site':
                             icon = campSiteIcon;
@@ -393,52 +393,52 @@ function searchAttractions(address, radius) {
                     }
                     
                     var marker = L.marker(latlng, {icon: icon}).bindPopup(popupContent).addTo(markers);
-// var startLatLng = L.latLng(startcoord[1], startcoord[0]);
-// var waypoint=[];
-// control = L.Routing.control({
-//     waypoints: [startLatLng],
-//     routeWhileDragging: false,
-//     show: false
-// }).addTo(mymap);
+    
+    startCoord = L.latLng(startcoord[1], startcoord[0]);
+    var waypoints = [];
+    waypoints.push(startCoord);
+    marker.on('popupopen', function() {
+        var btn = document.getElementById('add-to-route1');
+        btn.onclick = null;
+        var index; 
 
-//control._container.style.display = "none";
-//console.log(waypoint);
-//waypoint=control.getWaypoints();
-//console.log(waypoint);
-// marker.on('popupopen', function() {
-//     var btn = document.getElementById('add-to-route');
-//     btn.onclick = null;
-//     var index;
-//     var latlngStr = latlng.lat + ',' + latlng.lng;
-//     if(addedPoints.includes(latlngStr)){
-//         btn.textContent='Usuń z trasy';
-//         for(var i=0;i<waypoint.length;i++){
-//             if(waypoint[i].latLng && waypoint[i].latLng.lat==latlng.lat && waypoint[i].latLng.lng==latlng.lng){
-//                 index=i;
-//             }
-//         }
-//         btn.addEventListener('click', function() {
-//             control.spliceWaypoints(index, 1);
-//             addedPoints.splice(addedPoints.indexOf(latlngStr), 1);
-//             marker.closePopup();
-//         });
-//     }
-//     else{
-//         btn.addEventListener('click', function() {
-//             var newWaypoint = L.Routing.waypoint(L.latLng(latlng.lat, latlng.lng));
-//             waypoint.push(newWaypoint);
-//             addedPoints.push(latlngStr);
-//             marker.closePopup();
+        var latlngStr = latlng.lat + ',' + latlng.lng;
+        if(addedPoints.includes(latlngStr)){
+            btn.textContent='Usuń z trasy';
+            for(var i=0;i<waypoints.length;i++){
+                if(waypoints[i].latLng && waypoints[i].latLng.lat==latlng.lat && waypoints[i].latLng.lng==latlng.lng){
+                    index=i;
+                }
+            }
+            btn.addEventListener('click', function() {
+                control1.spliceWaypoints(index, 1);
+                addedPoints.splice(addedPoints.indexOf(latlngStr), 1);
+                if (waypoints.length == 1) {
+                    mymap.removeControl(control1);
+                    control1 = null;
+                    
 
-//             if(waypoint.length >= 2){
-//                 //console.log(waypoint);
-//                 control.setWaypoints(waypoint);
-//                 control._container.style.display = "block";
-//             }
-//         });
-//     }
-// });
-return marker;
+                }
+                marker.closePopup();
+            });
+        }
+        else{
+            btn.addEventListener('click', function() {
+                var newWaypoint = L.latLng(latlng.lat, latlng.lng);
+                control1=L.Routing.control({
+                    waypoints: [startCoord, newWaypoint],
+                    routeWhileDragging: false,
+                    show: false
+                }).addTo(mymap);
+                waypoints.push(newWaypoint);
+                addedPoints.push(latlngStr);
+                marker.closePopup();
+
+                
+            });
+        }
+    });
+    return marker;
                                                 }
                             }).addTo(mymap); 
                             var group = L.featureGroup(markers.getLayers());
